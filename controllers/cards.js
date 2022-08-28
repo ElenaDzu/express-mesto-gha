@@ -1,43 +1,92 @@
-const Card = require("../models/card");
+const Card = require('../models/card');
 
+const {
+  BAD_REGUEST,
+  NOT_FOUND,
+  INTERNAL_SERVER_ERROR,
+} = require('../utils/errors');
+//400,500
 module.exports.getCards = (req, res) => {
   Card.find({})
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: "Произошла ошибка" }));
-}
-
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(BAD_REGUEST).send({ message: 'Неправильный запрос' });
+        return;
+      }
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: 'На сервере произошла ошибка' });
+    });
+};
+//400,500
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
-  if (!name || !link) {
-    res.status(400).send({ message: "Неправильные данные" })
-  }
   Card.create({ name, link, owner: req.user._id })
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: "Произошла ошибка" }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(BAD_REGUEST).send({ message: 'Неправильный запрос' });
+        return;
+      }
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: 'На сервере произошла ошибка' });
+    });
 };
-
+//404
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: "Произошла ошибка" }));
+    .catch((err) =>
+      res.status(NOT_FOUND).send({ message: 'Объект не найден' })
+    );
 };
-
-module.exports.putLike =
-(req, res) => {
+//400,404,500
+module.exports.putLike = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
-    { new: true },
+    { new: true }
   )
-    .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: "Произошла ошибка" }));
-}
+    .then((user) => {
+      if (user) {
+        res.send({ data: user });
+        return;
+      }
+      res.status(NOT_FOUND).send({ message: 'Объект не найден' });
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(BAD_REGUEST).send({ message: 'Неправильный запрос' });
+        return;
+      }
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: 'На сервере произошла ошибка' });
+    });
+};
+//400,404,500
 module.exports.deleteLike = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
-    { new: true },
+    { new: true }
   )
-    .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: "Произошла ошибка" }));
-}
+    .then((user) => {
+      if (user) {
+        res.send({ data: user });
+        return;
+      }
+      res.status(NOT_FOUND).send({ message: 'Объект не найден' });
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(BAD_REGUEST).send({ message: 'Неправильный запрос' });
+        return;
+      }
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: 'На сервере произошла ошибка' });
+    });
+};
