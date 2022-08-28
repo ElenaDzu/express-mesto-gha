@@ -16,21 +16,27 @@ module.exports.getUser = (req, res) => {
       }
       res
         .status(INTERNAL_SERVER_ERROR)
-        .send({ message: 'На сервере произошла ошибка' });
+        .send({ message: `На сервере произошла ошибка ${err.name}` });
     });
 };
 
 module.exports.getUserId = (req, res) => {
+  if (req.params.userId.length !== 24) {
+    res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
+    return;
+  }
   User.findById(req.params.userId)
-    .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      if (err.name === 'CastError') {
+    .then((user) => {
+      if (!user) {
         res.status(NOT_FOUND).send({ message: 'Объект не найден' });
         return;
       }
+      res.send({ data: user });
+    })
+    .catch((err) => {
       res
         .status(INTERNAL_SERVER_ERROR)
-        .send({ message: 'На сервере произошла ошибка' });
+        .send({ message: `На сервере произошла ошибка ${err.name}` });
     });
 };
 
@@ -46,7 +52,7 @@ module.exports.postUsers = (req, res) => {
       }
       res
         .status(INTERNAL_SERVER_ERROR)
-        .send({ message: 'На сервере произошла ошибка' });
+        .send({ message: `На сервере произошла ошибка ${err.name}` });
     });
 };
 
@@ -56,7 +62,7 @@ module.exports.patchUserId = (req, res) => {
     res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
     return;
   }
-  User.findByIdAndUpdate(req.params.userId, { name, about })
+  User.findByIdAndUpdate(req.user._id, { name, about })
     .then((user) => {
       if (user) {
         res.send({ data: user });
@@ -71,7 +77,7 @@ module.exports.patchUserId = (req, res) => {
       }
       res
         .status(INTERNAL_SERVER_ERROR)
-        .send({ message: 'На сервере произошла ошибка' });
+        .send({ message: `На сервере произошла ошибка ${err.name}` });
     });
 };
 
@@ -81,7 +87,7 @@ module.exports.patchAvatar = (req, res) => {
     res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
     return;
   }
-  User.findByIdAndUpdate(req.params.userId, { avatar })
+  User.findByIdAndUpdate(req.user._id, { avatar })
     .then((user) => {
       if (user) {
         res.send({ data: user });
@@ -96,6 +102,6 @@ module.exports.patchAvatar = (req, res) => {
       }
       res
         .status(INTERNAL_SERVER_ERROR)
-        .send({ message: 'На сервере произошла ошибка' });
+        .send({ message: `На сервере произошла ошибка ${err.name}` });
     });
 };

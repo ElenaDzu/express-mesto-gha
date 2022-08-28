@@ -16,7 +16,7 @@ module.exports.getCards = (req, res) => {
       }
       res
         .status(INTERNAL_SERVER_ERROR)
-        .send({ message: 'На сервере произошла ошибка' });
+        .send({ message: `На сервере произошла ошибка ${err.name}` });
     });
 };
 
@@ -31,11 +31,15 @@ module.exports.createCard = (req, res) => {
       }
       res
         .status(INTERNAL_SERVER_ERROR)
-        .send({ message: 'На сервере произошла ошибка' });
+        .send({ message: `На сервере произошла ошибка ${err.name}` });
     });
 };
 
 module.exports.deleteCard = (req, res) => {
+  if (req.params.cardId.length !== 24) {
+    res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
+    return;
+  }
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (card) {
@@ -51,7 +55,7 @@ module.exports.deleteCard = (req, res) => {
       }
       res
         .status(INTERNAL_SERVER_ERROR)
-        .send({ message: 'На сервере произошла ошибка' });
+        .send({ message: `На сервере произошла ошибка ${err.name}` });
     });
 };
 
@@ -66,7 +70,7 @@ module.exports.putLike = (req, res) => {
         res.send({ data: card });
         return;
       }
-      res.status(NOT_FOUND).send({ message: 'Объект не найден' });
+      res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -75,7 +79,7 @@ module.exports.putLike = (req, res) => {
       }
       res
         .status(INTERNAL_SERVER_ERROR)
-        .send({ message: 'На сервере произошла ошибка' });
+        .send({ message: `На сервере произошла ошибка ${err.name}` });
     });
 };
 
@@ -90,7 +94,7 @@ module.exports.deleteLike = (req, res) => {
         res.send({ data: card });
         return;
       }
-      res.status(NOT_FOUND).send({ message: 'Объект не найден' });
+      res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -99,6 +103,6 @@ module.exports.deleteLike = (req, res) => {
       }
       res
         .status(INTERNAL_SERVER_ERROR)
-        .send({ message: 'На сервере произошла ошибка' });
+        .send({ message: `На сервере произошла ошибка ${err.name}` });
     });
 };

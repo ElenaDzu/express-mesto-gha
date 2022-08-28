@@ -1,6 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const routes = require('./routes/users');
+const {
+  NOT_FOUND,
+} = require('./utils/errors');
 
 const { PORT = 3000 } = process.env;
 
@@ -22,5 +25,7 @@ app.use((req, res, next) => {
 app.use('/users', routes);
 
 app.use('/cards', require('./routes/cards'));
+
+app.all('/*', (req, res) => res.status(NOT_FOUND).send({ message: 'Ресурс не найден' }));
 
 app.listen(PORT);
