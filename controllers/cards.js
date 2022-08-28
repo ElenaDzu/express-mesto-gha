@@ -74,7 +74,7 @@ module.exports.putLike = (req, res) => {
         res.send({ data: card });
         return;
       }
-      res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
+      res.status(NOT_FOUND).send({ message: 'Объект не найден' });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -102,7 +102,7 @@ module.exports.deleteLike = (req, res) => {
         res.send({ data: card });
         return;
       }
-      res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
+      res.status(NOT_FOUND).send({ message: 'Объект не найден' });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
