@@ -23,8 +23,4 @@ app.use('/users', routes);
 
 app.use('/cards', require('./routes/cards'));
 
-
-
-app.listen(PORT, () => {
-    console.log(`App listening on port ${PORT}`)
-})
+app.listen(PORT);
