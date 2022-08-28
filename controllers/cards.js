@@ -60,6 +60,10 @@ module.exports.deleteCard = (req, res) => {
 };
 
 module.exports.putLike = (req, res) => {
+  if (req.params.cardId.length !== 24) {
+    res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
+    return;
+  }
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
@@ -84,6 +88,10 @@ module.exports.putLike = (req, res) => {
 };
 
 module.exports.deleteLike = (req, res) => {
+  if (req.params.cardId.length !== 24) {
+    res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
+    return;
+  }
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },

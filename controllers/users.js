@@ -62,7 +62,7 @@ module.exports.patchUserId = (req, res) => {
     res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
     return;
   }
-  User.findByIdAndUpdate(req.user._id, { name, about })
+  User.findByIdAndUpdate(req.user._id, { name, about }, { returnOriginal: false })
     .then((user) => {
       if (user) {
         res.send({ data: user });
@@ -87,7 +87,7 @@ module.exports.patchAvatar = (req, res) => {
     res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
     return;
   }
-  User.findByIdAndUpdate(req.user._id, { avatar })
+  User.findByIdAndUpdate(req.user._id, { avatar }, { returnOriginal: false })
     .then((user) => {
       if (user) {
         res.send({ data: user });
