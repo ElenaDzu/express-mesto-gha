@@ -1,7 +1,7 @@
 const User = require('../models/user');
 
 const {
-  BAD_REGUEST,
+  BAD_REQUEST,
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
 } = require('../utils/errors');
@@ -11,7 +11,7 @@ module.exports.getUser = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REGUEST).send({ message: 'Неправильный запрос' });
+        res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
         return;
       }
       res
@@ -41,7 +41,7 @@ module.exports.postUsers = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REGUEST).send({ message: 'Неправильный запрос' });
+        res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
         return;
       }
       res
@@ -53,7 +53,7 @@ module.exports.postUsers = (req, res) => {
 module.exports.patchUserId = (req, res) => {
   const { name, about } = req.body;
   if (!name || !about) {
-    res.status(BAD_REGUEST).send({ message: 'Неправильный запрос' });
+    res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
     return;
   }
   User.findByIdAndUpdate(req.params.userId, { name, about })
@@ -66,7 +66,7 @@ module.exports.patchUserId = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REGUEST).send({ message: 'Неправильный запрос' });
+        res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
         return;
       }
       res
@@ -78,7 +78,7 @@ module.exports.patchUserId = (req, res) => {
 module.exports.patchAvatar = (req, res) => {
   const { avatar } = req.body;
   if (!avatar) {
-    res.status(BAD_REGUEST).send({ message: 'Неправильный запрос' });
+    res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
     return;
   }
   User.findByIdAndUpdate(req.params.userId, { avatar })
@@ -91,7 +91,7 @@ module.exports.patchAvatar = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REGUEST).send({ message: 'Неправильный запрос' });
+        res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
         return;
       }
       res

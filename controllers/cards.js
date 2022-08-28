@@ -1,7 +1,7 @@
 const Card = require('../models/card');
 
 const {
-  BAD_REGUEST,
+  BAD_REQUEST,
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
 } = require('../utils/errors');
@@ -11,7 +11,7 @@ module.exports.getCards = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REGUEST).send({ message: 'Неправильный запрос' });
+        res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
         return;
       }
       res
@@ -26,7 +26,7 @@ module.exports.createCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REGUEST).send({ message: 'Неправильный запрос' });
+        res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
         return;
       }
       res
@@ -46,7 +46,7 @@ module.exports.deleteCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REGUEST).send({ message: 'Неправильный запрос' });
+        res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
         return;
       }
       res
@@ -70,7 +70,7 @@ module.exports.putLike = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REGUEST).send({ message: 'Неправильный запрос' });
+        res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
         return;
       }
       res
@@ -94,7 +94,7 @@ module.exports.deleteLike = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REGUEST).send({ message: 'Неправильный запрос' });
+        res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
         return;
       }
       res
