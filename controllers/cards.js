@@ -5,7 +5,7 @@ const {
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
 } = require('../utils/errors');
-//400,500
+
 module.exports.getCards = (req, res) => {
   Card.find({})
     .then((card) => res.send({ data: card }))
@@ -19,7 +19,7 @@ module.exports.getCards = (req, res) => {
         .send({ message: 'На сервере произошла ошибка' });
     });
 };
-//400,500
+
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
@@ -34,13 +34,13 @@ module.exports.createCard = (req, res) => {
         .send({ message: 'На сервере произошла ошибка' });
     });
 };
-//404
+
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => res.send({ data: card }))
     .catch((err) => res.status(NOT_FOUND).send({ message: 'Объект не найден' }));
 };
-//400,404,500
+
 module.exports.putLike = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
@@ -65,7 +65,7 @@ module.exports.putLike = (req, res) => {
         .send({ message: 'На сервере произошла ошибка' });
     });
 };
-//400,404,500
+
 module.exports.deleteLike = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,

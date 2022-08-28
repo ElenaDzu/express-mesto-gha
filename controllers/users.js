@@ -5,7 +5,7 @@ const {
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
 } = require('../utils/errors');
-//500,400
+
 module.exports.getUser = (req, res) => {
   User.find({})
     .then((user) => res.send({ data: user }))
@@ -19,7 +19,7 @@ module.exports.getUser = (req, res) => {
         .send({ message: 'На сервере произошла ошибка' });
     });
 };
-//404,500
+
 module.exports.getUserId = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => res.send({ data: user }))
@@ -33,7 +33,7 @@ module.exports.getUserId = (req, res) => {
         .send({ message: 'На сервере произошла ошибка' });
     });
 };
-//500,400
+
 module.exports.postUsers = (req, res) => {
   const { name, about, avatar } = req.body;
 
@@ -49,7 +49,7 @@ module.exports.postUsers = (req, res) => {
         .send({ message: 'На сервере произошла ошибка' });
     });
 };
-//400,404,500
+
 module.exports.patchUserId = (req, res) => {
   const { name, about } = req.body;
   if (!name || !about) {
@@ -74,7 +74,7 @@ module.exports.patchUserId = (req, res) => {
         .send({ message: 'На сервере произошла ошибка' });
     });
 };
-//400,404,500
+
 module.exports.patchAvatar = (req, res) => {
   const { avatar } = req.body;
   if (!avatar) {
