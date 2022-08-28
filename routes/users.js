@@ -14,8 +14,8 @@ router.get('/:userId', getUserId);
 
 router.post('/', postUsers);
 
-router.patch('/:userId/me', patchUserId);
+router.patch('/me', patchUserId);
 
-router.patch('/:userId/me/avatar', patchAvatar);
+router.patch('/me/avatar', patchAvatar);
 
 module.exports = router;

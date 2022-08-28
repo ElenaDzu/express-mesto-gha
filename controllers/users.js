@@ -52,6 +52,10 @@ module.exports.postUsers = (req, res) => {
 //400,404,500
 module.exports.patchUserId = (req, res) => {
   const { name, about } = req.body;
+  if (!name || !about) {
+    res.status(BAD_REGUEST).send({ message: 'Неправильный запрос' });
+    return;
+  }
   User.findByIdAndUpdate(req.params.userId, { name, about })
     .then((user) => {
       if (user) {
@@ -73,6 +77,10 @@ module.exports.patchUserId = (req, res) => {
 //400,404,500
 module.exports.patchAvatar = (req, res) => {
   const { avatar } = req.body;
+  if (!avatar) {
+    res.status(BAD_REGUEST).send({ message: 'Неправильный запрос' });
+    return;
+  }
   User.findByIdAndUpdate(req.params.userId, { avatar })
     .then((user) => {
       if (user) {

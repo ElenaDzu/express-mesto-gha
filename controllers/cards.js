@@ -8,7 +8,7 @@ const {
 //400,500
 module.exports.getCards = (req, res) => {
   Card.find({})
-    .then((user) => res.send({ data: user }))
+    .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(BAD_REGUEST).send({ message: 'Неправильный запрос' });
@@ -23,7 +23,7 @@ module.exports.getCards = (req, res) => {
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
-    .then((user) => res.send({ data: user }))
+    .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(BAD_REGUEST).send({ message: 'Неправильный запрос' });
@@ -37,21 +37,20 @@ module.exports.createCard = (req, res) => {
 //404
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .then((user) => res.send({ data: user }))
-    .catch((err) =>
-      res.status(NOT_FOUND).send({ message: 'Объект не найден' })
-    );
+    .then((card) => res.send({ data: card }))
+    .catch((err) => res.status(NOT_FOUND).send({ message: 'Объект не найден' }));
 };
 //400,404,500
 module.exports.putLike = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
-    { new: true }
+    { new: true },
   )
-    .then((user) => {
-      if (user) {
-        res.send({ data: user });
+    .then((card) => {
+      console.log(card);
+      if (card) {
+        res.send({ data: card });
         return;
       }
       res.status(NOT_FOUND).send({ message: 'Объект не найден' });
@@ -71,11 +70,11 @@ module.exports.deleteLike = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
-    { new: true }
+    { new: true },
   )
-    .then((user) => {
-      if (user) {
-        res.send({ data: user });
+    .then((card) => {
+      if (card) {
+        res.send({ data: card });
         return;
       }
       res.status(NOT_FOUND).send({ message: 'Объект не найден' });

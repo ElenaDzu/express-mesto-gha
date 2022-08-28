@@ -1,3 +1,3 @@
-export const BAD_REGUEST = 400;
-export const NOT_FOUND = 404;
-export const INTERNAL_SERVER_ERROR = 500;
+module.exports.BAD_REGUEST = 400;
+module.exports.NOT_FOUND = 404;
+module.exports.INTERNAL_SERVER_ERROR = 500;
