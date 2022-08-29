@@ -10,10 +10,6 @@ module.exports.getCards = (req, res) => {
   Card.find({})
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
-        return;
-      }
       res
         .status(INTERNAL_SERVER_ERROR)
         .send({ message: `На сервере произошла ошибка ${err.name}` });
@@ -36,10 +32,6 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
-  if (req.params.cardId.length !== 24) {
-    res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
-    return;
-  }
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (card) {
@@ -49,8 +41,8 @@ module.exports.deleteCard = (req, res) => {
       res.status(NOT_FOUND).send({ message: 'Объект не найден' });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
+      if (err.name === 'CasrError') {
+        res.status(BAD_REQUEST).send({ message: 'Некорректный id' });
         return;
       }
       res
@@ -60,10 +52,6 @@ module.exports.deleteCard = (req, res) => {
 };
 
 module.exports.putLike = (req, res) => {
-  if (req.params.cardId.length !== 24) {
-    res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
-    return;
-  }
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
@@ -77,8 +65,8 @@ module.exports.putLike = (req, res) => {
       res.status(NOT_FOUND).send({ message: 'Объект не найден' });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
+      if (err.name === 'CastError') {
+        res.status(BAD_REQUEST).send({ message: 'Некорректный id' });
         return;
       }
       res
@@ -88,10 +76,6 @@ module.exports.putLike = (req, res) => {
 };
 
 module.exports.deleteLike = (req, res) => {
-  if (req.params.cardId.length !== 24) {
-    res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
-    return;
-  }
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
@@ -105,8 +89,8 @@ module.exports.deleteLike = (req, res) => {
       res.status(NOT_FOUND).send({ message: 'Объект не найден' });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
+      if (err.name === 'CastError') {
+        res.status(BAD_REQUEST).send({ message: 'Некорректный id' });
         return;
       }
       res

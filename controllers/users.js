@@ -9,22 +9,11 @@ const {
 module.exports.getUser = (req, res) => {
   User.find({})
     .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
-        return;
-      }
-      res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: `На сервере произошла ошибка ${err.name}` });
-    });
+    .catch((err) => res.status(INTERNAL_SERVER_ERROR)
+      .send({ message: `На сервере произошла ошибка ${err.name}` }));
 };
 
 module.exports.getUserId = (req, res) => {
-  if (req.params.userId.length !== 24) {
-    res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
-    return;
-  }
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
@@ -34,6 +23,10 @@ module.exports.getUserId = (req, res) => {
       res.send({ data: user });
     })
     .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(BAD_REQUEST).send({ message: 'Некорректный id' });
+        return;
+      }
       res
         .status(INTERNAL_SERVER_ERROR)
         .send({ message: `На сервере произошла ошибка ${err.name}` });
@@ -62,7 +55,7 @@ module.exports.patchUserId = (req, res) => {
     res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
     return;
   }
-  User.findByIdAndUpdate(req.user._id, { name, about }, { returnOriginal: false })
+  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (user) {
         res.send({ data: user });
@@ -87,7 +80,7 @@ module.exports.patchAvatar = (req, res) => {
     res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
     return;
   }
-  User.findByIdAndUpdate(req.user._id, { avatar }, { returnOriginal: false })
+  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (user) {
         res.send({ data: user });
