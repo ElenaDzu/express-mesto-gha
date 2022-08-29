@@ -41,7 +41,7 @@ module.exports.deleteCard = (req, res) => {
       res.status(NOT_FOUND).send({ message: 'Объект не найден' });
     })
     .catch((err) => {
-      if (err.name === 'CasrError') {
+      if (err.name === 'CastError') {
         res.status(BAD_REQUEST).send({ message: 'Некорректный id' });
         return;
       }
