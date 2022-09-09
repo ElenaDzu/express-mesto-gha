@@ -1,4 +1,5 @@
 const Card = require('../models/card');
+const { deleteOne } = require('../models/user');
 
 const {
   BAD_REQUEST,
@@ -32,10 +33,11 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .then((card) => {
-      if (card) {
+      if (card && card.owner === req.user._id) {
         res.send({ data: card });
+        Card.findByIdAndDelete(card._id);
         return;
       }
       res.status(NOT_FOUND).send({ message: 'Объект не найден' });
