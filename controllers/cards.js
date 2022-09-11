@@ -1,83 +1,79 @@
 const Card = require('../models/card');
 const { deleteOne } = require('../models/user');
+const BadRequest400 = require('../Errors/BadRequest400');
+const InternalServerError500 = require('../Errors/InternalServerError500');
+const NotFound404 = require('../Errors/NotFound404');
+const Forbidden403 = require('../Errors/Forbidden403');
 
-const {
-  BAD_REQUEST,
-  NOT_FOUND,
-  INTERNAL_SERVER_ERROR,
-} = require('../utils/errors');
 
-module.exports.getCards = (req, res) => {
+module.exports.getCards = (req, res, next) => {
   Card.find({})
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: `На сервере произошла ошибка ${err.name}` });
-    });
+      console.log(err);
+      throw new InternalServerError500();
+    })
+    .catch(next);
 };
 
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST).send({ message: 'Неправильный запрос' });
-        return;
+        throw new BadRequest400();
       }
-      res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: `На сервере произошла ошибка ${err.name}` });
-    });
+      throw new InternalServerError500();
+    })
+    .catch(next);
 };
 
-module.exports.deleteCard = (req, res) => {
+module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .then((card) => {
+      if (!card) {
+        throw new NotFound404();
+      }
       if (card && card.owner === req.user._id) {
         res.send({ data: card });
         Card.findByIdAndDelete(card._id);
         return;
       }
-      res.status(NOT_FOUND).send({ message: 'Объект не найден' });
+      throw new Forbidden403();
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Некорректный id' });
-        return;
+        throw new BadRequest400();
       }
-      res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: `На сервере произошла ошибка ${err.name}` });
-    });
+      throw new InternalServerError500();
+    })
+    .catch(next);
 };
 
-module.exports.putLike = (req, res) => {
+module.exports.putLike = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
-    { new: true },
+    { new: true }
   )
     .then((card) => {
       if (card) {
         res.send({ data: card });
         return;
       }
-      res.status(NOT_FOUND).send({ message: 'Объект не найден' });
+      throw new NotFound404();
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Некорректный id' });
-        return;
+        throw new BadRequest400();
       }
-      res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: `На сервере произошла ошибка ${err.name}` });
-    });
+      throw new InternalServerError500();
+    })
+    .catch(next);
 };
 
-module.exports.deleteLike = (req, res) => {
+module.exports.deleteLike = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
@@ -88,15 +84,13 @@ module.exports.deleteLike = (req, res) => {
         res.send({ data: card });
         return;
       }
-      res.status(NOT_FOUND).send({ message: 'Объект не найден' });
+      throw new NotFound404();
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Некорректный id' });
-        return;
+        throw new BadRequest400();
       }
-      res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: `На сервере произошла ошибка ${err.name}` });
-    });
+      throw new InternalServerError500();
+    })
+    .catch(next);
 };

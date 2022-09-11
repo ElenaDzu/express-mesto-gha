@@ -1,66 +1,65 @@
-const User = require("../models/user");
-
-const bcrypt = require("bcryptjs");
+const User = require('../models/user');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const Conflict409 = require('../Errors/Conflict409');
+const BadRequest400 = require('../Errors/BadRequest400');
+const InternalServerError500 = require('../Errors/InternalServerError500');
+const NotFound404 = require('../Errors/NotFound404');
 
-const {
-  BAD_REQUEST,
-  NOT_FOUND,
-  INTERNAL_SERVER_ERROR,
-} = require("../utils/errors");
 
-module.exports.getUser = (req, res) => {
+module.exports.getUser = (req, res, next) => {
   User.find({})
     .then((user) => res.send({ data: user }))
-    .catch((err) =>
-      res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: `На сервере произошла ошибка ${err.name}` })
-    );
+    .catch((err) => {
+      console.log(err);
+      throw new InternalServerError500();
+    })
+    .catch(next);
 };
 
-module.exports.getUserId = (req, res) => {
+module.exports.getUserId = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        res.status(NOT_FOUND).send({ message: "Объект не найден" });
-        return;
+        throw new NotFound404();
       }
       res.send({ data: user });
     })
     .catch((err) => {
-      if (err.name === "CastError") {
-        res.status(BAD_REQUEST).send({ message: "Некорректный id" });
-        return;
+      if (err.name === 'CastError') {
+        throw new BadRequest400();
       }
-      res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: `На сервере произошла ошибка ${err.name}` });
-    });
+      throw new InternalServerError500();
+    })
+    .catch(next);
 };
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   const { name, about, avatar, email, password } = req.body;
   bcrypt.hash(password, 10).then((hash) => {
     User.create({ name, about, avatar, email, password: hash })
-      .then((user) => res.send({ data: user }))
+      .then((user) => {
+        const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+        res.cookie('token', token, { maxAge: 3600 * 24 * 7, httpOnly: true });
+        res.send({ data: user })
+      })
       .catch((err) => {
-        if (err.name === "ValidationError") {
-          res.status(BAD_REQUEST).send({ message: "Неправильный запрос" });
-          return;
+        if (err.code === 11000) {
+          throw new Conflict409();
         }
-        res
-          .status(INTERNAL_SERVER_ERROR)
-          .send({ message: `На сервере произошла ошибка ${err.name}` });
-      });
+        if (err.name === 'ValidationError') {
+          throw new BadRequest400();
+        }
+        throw new InternalServerError500();
+      })
+      .catch(next);
   });
 };
 
-module.exports.patchUserId = (req, res) => {
+module.exports.patchUserId = (req, res, next) => {
   const { name, about } = req.body;
   if (!name || !about) {
-    res.status(BAD_REQUEST).send({ message: "Неправильный запрос" });
-    return;
+    throw new BadRequest400();
   }
   User.findByIdAndUpdate(
     req.user._id,
@@ -72,24 +71,21 @@ module.exports.patchUserId = (req, res) => {
         res.send({ data: user });
         return;
       }
-      res.status(NOT_FOUND).send({ message: "Объект не найден" });
+      throw new NotFound404();
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        res.status(BAD_REQUEST).send({ message: "Неправильный запрос" });
-        return;
+      if (err.name === 'ValidationError') {
+        throw new BadRequest400();
       }
-      res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: `На сервере произошла ошибка ${err.name}` });
-    });
+      throw new InternalServerError500();
+    })
+    .catch(next);
 };
 
-module.exports.patchAvatar = (req, res) => {
+module.exports.patchAvatar = (req, res, next) => {
   const { avatar } = req.body;
   if (!avatar) {
-    res.status(BAD_REQUEST).send({ message: "Неправильный запрос" });
-    return;
+    throw new BadRequest400();
   }
   User.findByIdAndUpdate(
     req.user._id,
@@ -101,20 +97,18 @@ module.exports.patchAvatar = (req, res) => {
         res.send({ data: user });
         return;
       }
-      res.status(NOT_FOUND).send({ message: "Объект не найден" });
+      throw new NotFound404();
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        res.status(BAD_REQUEST).send({ message: "Неправильный запрос" });
-        return;
+      if (err.name === 'ValidationError') {
+        throw new BadRequest400();
       }
-      res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: `На сервере произошла ошибка ${err.name}` });
-    });
+      throw new InternalServerError500();
+    })
+    .catch(next);
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   User.findOne({ email }).select('+password')
     .then((user) => {
