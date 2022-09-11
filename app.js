@@ -36,13 +36,13 @@ app.use('/users', routes);
 
 app.use('/cards', require('./routes/cards'));
 
-app.all('/*', (req, res) => {
+app.all('/*', () => {
   throw new NotFound404();
 });
 
 app.use(errors());
 
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   res.status(err.statusCode).send({ message: err.message });
 });
 

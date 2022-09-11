@@ -9,8 +9,7 @@ const NotFound404 = require('../Errors/NotFound404');
 module.exports.getUser = (req, res, next) => {
   User.find({})
     .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      console.log(err);
+    .catch(() => {
       throw new InternalServerError500();
     })
     .catch(next);
@@ -135,5 +134,6 @@ module.exports.login = (req, res, next) => {
       res
         .status(401)
         .send({ message: err.message });
-    });
+    })
+    .catch(next);
 };
