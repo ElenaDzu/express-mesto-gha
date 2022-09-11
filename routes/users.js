@@ -1,8 +1,8 @@
 const router = require('express').Router();
 
-const auth = require('../middlewares/auth');
-
 const { celebrate, Joi } = require('celebrate');
+
+const auth = require('../middlewares/auth');
 
 const {
   getUser,
@@ -13,27 +13,44 @@ const {
 
 router.get('/', auth, getUser);
 
-router.get('/:userId', celebrate({
-  params: Joi.object().keys({
-    userId: Joi.string().alphanum().length(24),
+router.get(
+  '/:userId',
+  celebrate({
+    params: Joi.object().keys({
+      userId: Joi.string().alphanum().length(24),
+    }),
+    headers: Joi.object().keys({}),
+    query: Joi.object().keys({}),
   }),
-  headers: Joi.object().keys({
+  auth,
+  getUserId,
+);
+
+router.patch(
+  '/me',
+  celebrate({
+    body: Joi.object().keys({
+      name: Joi.string().required().min(2).max(30),
+      about: Joi.string().min(2).max(30),
+    }),
   }),
-  query: Joi.object().keys({
+  auth,
+  patchUserId,
+);
+
+router.patch(
+  '/me/avatar',
+  celebrate({
+    body: Joi.object().keys({
+      avatar: Joi.string()
+        .required()
+        .regex(
+          /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
+        ),
+    }),
   }),
- }), auth, getUserId);
-
-router.patch('/me', celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().required().min(2).max(30),
-    about: Joi.string().min(2).max(30)})
-}), auth, patchUserId);
-
-router.patch('/me/avatar', celebrate({
-  body: Joi.object().keys({
-   avatar: Joi.string().required().regex(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/)
-  })
-}), auth, patchAvatar);
-
+  auth,
+  patchAvatar,
+);
 
 module.exports = router;

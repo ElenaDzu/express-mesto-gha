@@ -1,11 +1,10 @@
-const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const Conflict409 = require('../Errors/Conflict409');
+const User = require('../models/user');
+const Conflict409 = require('../Errors/Confliсt409');
 const BadRequest400 = require('../Errors/BadRequest400');
 const InternalServerError500 = require('../Errors/InternalServerError500');
 const NotFound404 = require('../Errors/NotFound404');
-
 
 module.exports.getUser = (req, res, next) => {
   User.find({})
@@ -41,7 +40,7 @@ module.exports.createUser = (req, res, next) => {
       .then((user) => {
         const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
         res.cookie('token', token, { maxAge: 3600 * 24 * 7, httpOnly: true });
-        res.send({ data: user })
+        res.send({ data: user });
       })
       .catch((err) => {
         if (err.code === 11000) {
@@ -64,7 +63,7 @@ module.exports.patchUserId = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { name, about },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
     .then((user) => {
       if (user) {
@@ -90,7 +89,7 @@ module.exports.patchAvatar = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { avatar },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
     .then((user) => {
       if (user) {

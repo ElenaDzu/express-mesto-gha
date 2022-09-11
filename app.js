@@ -1,11 +1,10 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
+const { errors, celebrate, Joi } = require('celebrate');
 const routes = require('./routes/users');
-const { errors } = require('celebrate');
 const NotFound404 = require('./Errors/NotFound404');
 const { login, createUser } = require('./controllers/users');
-const { celebrate, Joi } = require('celebrate');
 
 const { PORT = 3000 } = process.env;
 
@@ -30,7 +29,7 @@ app.post('/signup', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
-  })
+  }),
 }), createUser);
 
 app.use('/users', routes);

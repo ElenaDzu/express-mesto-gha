@@ -1,10 +1,8 @@
 const Card = require('../models/card');
-const { deleteOne } = require('../models/user');
 const BadRequest400 = require('../Errors/BadRequest400');
 const InternalServerError500 = require('../Errors/InternalServerError500');
 const NotFound404 = require('../Errors/NotFound404');
 const Forbidden403 = require('../Errors/Forbidden403');
-
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
@@ -55,7 +53,7 @@ module.exports.putLike = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
-    { new: true }
+    { new: true },
   )
     .then((card) => {
       if (card) {

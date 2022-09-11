@@ -1,8 +1,8 @@
 const router = require('express').Router();
 
-const auth = require('../middlewares/auth');
-
 const { celebrate, Joi } = require('celebrate');
+
+const auth = require('../middlewares/auth');
 
 const {
   getCards,
@@ -14,29 +14,53 @@ const {
 
 router.get('/', auth, getCards);
 
-router.post('/',  celebrate({
-  body: Joi.object().keys({
-   name: Joi.string().required().min(2).max(30),
-   link: Joi.string().required().regex(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/)
-  })
-}), auth, createCard);
-
-router.delete('/:cardId', celebrate ({
-  params: Joi.object().keys({
-    cardId: Joi.string().alphanum().length(24),
+router.post(
+  '/',
+  celebrate({
+    body: Joi.object().keys({
+      name: Joi.string().required().min(2).max(30),
+      link: Joi.string()
+        .required()
+        .regex(
+          /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
+        ),
+    }),
   }),
-}), auth, deleteCard);
+  auth,
+  createCard,
+);
 
-router.put('/:cardId/likes', celebrate ({
-  params: Joi.object().keys({
-    cardId: Joi.string().alphanum().length(24),
+router.delete(
+  '/:cardId',
+  celebrate({
+    params: Joi.object().keys({
+      cardId: Joi.string().alphanum().length(24),
+    }),
   }),
-}), auth, putLike);
+  auth,
+  deleteCard,
+);
 
-router.delete('/:cardId/likes', celebrate ({
-  params: Joi.object().keys({
-    cardId: Joi.string().alphanum().length(24),
+router.put(
+  '/:cardId/likes',
+  celebrate({
+    params: Joi.object().keys({
+      cardId: Joi.string().alphanum().length(24),
+    }),
   }),
-}), auth, deleteLike);
+  auth,
+  putLike,
+);
+
+router.delete(
+  '/:cardId/likes',
+  celebrate({
+    params: Joi.object().keys({
+      cardId: Joi.string().alphanum().length(24),
+    }),
+  }),
+  auth,
+  deleteLike,
+);
 
 module.exports = router;
