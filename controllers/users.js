@@ -44,11 +44,10 @@ module.exports.createUser = (req, res, next) => {
         const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
         res.cookie('token', token, { maxAge: 3600 * 24 * 7, httpOnly: true });
         res.send({ data: user });
-        res.status(200);
       })
       .catch((err) => {
         if (err.code === 11000) {
-          throw new Conflict409();
+          next(new Conflict409());
         }
         if (err.name === 'ValidationError') {
           throw new BadRequest400();
