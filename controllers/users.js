@@ -134,6 +134,7 @@ module.exports.login = (req, res, next) => {
         avatar: user.avatar,
         _id: user._id,
       });
+      return Promise.resolve();
     })
     .catch((err) => {
       res
