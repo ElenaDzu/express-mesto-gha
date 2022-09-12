@@ -11,7 +11,9 @@ const {
   patchAvatar,
 } = require('../controllers/users');
 
-router.get('/', auth, getUser);
+router.get('/', celebrate({
+  params: Joi.object().keys({}),
+}), auth, getUser);
 
 router.get(
   '/:userId',
