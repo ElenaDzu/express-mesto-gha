@@ -19,5 +19,5 @@ module.exports = (req, res, next) => {
 
   req.user = payload;
 
-  next(Unauthorized401);
+  next();
 };

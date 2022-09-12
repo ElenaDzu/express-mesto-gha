@@ -128,7 +128,7 @@ module.exports.login = (req, res, next) => {
       res.cookie('token', token, { maxAge: 3600 * 24 * 7, httpOnly: true });
 
       res.send({ message: 'Всё верно!' });
-      return Promise.resolve();
+      return Promise.all();
     })
     .catch((err) => {
       res
