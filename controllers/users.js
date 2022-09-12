@@ -47,14 +47,13 @@ module.exports.createUser = (req, res, next) => {
       })
       .catch((err) => {
         if (err.code === 11000) {
-          throw new Conflict409();
+          next(new Conflict409());
+        } else if (err.name === 'ValidationError') {
+          next(new BadRequest400());
+        } else {
+          next(err);
         }
-        if (err.name === 'ValidationError') {
-          throw new BadRequest400();
-        }
-        throw new InternalServerError500();
-      })
-      .catch(next);
+      });
   });
 };
 
