@@ -1,7 +1,8 @@
 class Unauthorized401 extends Error {
-  constructor(message = 'Неверный логин, пароль, токен') {
+  constructor(message) {
     super(message);
     this.statusCode = 401;
+    this.message = 'Неверный логин, пароль, токен';
   }
 }
 
