@@ -43,17 +43,18 @@ module.exports.createUser = (req, res, next) => {
       .then((user) => {
         const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
         res.cookie('token', token, { maxAge: 3600 * 24 * 7, httpOnly: true });
-        res.status(201).send({ data: user });
+        res.send({ data: user });
       })
       .catch((err) => {
         if (err.code === 11000) {
-          next(new Conflict409());
-        } else if (err.name === 'ValidationError') {
-          next(new BadRequest400());
-        } else {
-          next(err);
+          throw new Conflict409();
         }
-      });
+        if (err.name === 'ValidationError') {
+          throw new BadRequest400();
+        }
+        throw new InternalServerError500();
+      })
+      .catch(next);
   });
 };
 
