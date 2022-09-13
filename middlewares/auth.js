@@ -1,10 +1,12 @@
 const jwt = require('jsonwebtoken');
 
+const Unauthorized401 = require('../Errors/Unauthorized 401');
+
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    return res.status(401).send({ message: 'Необходима авторизация' });
+    throw new Unauthorized401('Необходима авторизацияя');
   }
 
   const token = authorization.replace('Bearer ', '');
@@ -13,7 +15,7 @@ module.exports = (req, res, next) => {
   try {
     payload = jwt.verify(token, 'super-strong-secret');
   } catch (err) {
-    return res.status(401).send({ message: 'Необходима авторизация' });
+    throw new Unauthorized401('Необходима авторизацияя');
   }
 
   req.user = payload;
@@ -29,7 +31,7 @@ module.exports = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    throw new Unauthorized401(res);
+    throw new Unauthorized401();
   }
 
   const token = authorization.replace('Bearer ', '');
@@ -38,7 +40,7 @@ module.exports = (req, res, next) => {
   try {
     payload = jwt.verify(token, 'some-secret-key');
   } catch (err) {
-    throw new Unauthorized401(res);
+    throw new Unauthorized401();
   }
 
   req.user = payload;
