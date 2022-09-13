@@ -8,7 +8,7 @@ module.exports.getCards = (req, res, next) => {
   Card.find({})
     .then((card) => res.send({ data: card }))
     .catch(() => {
-      throw new InternalServerError500();
+      throw new InternalServerError500('На сервере произошла ошибка');
     })
     .catch(next);
 };
@@ -19,9 +19,9 @@ module.exports.createCard = (req, res, next) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequest400();
+        throw new BadRequest400('Неправильный запрос');
       }
-      throw new InternalServerError500();
+      throw new InternalServerError500('На сервере произошла ошибка');
     })
     .catch(next);
 };
@@ -37,13 +37,13 @@ module.exports.deleteCard = (req, res, next) => {
         Card.findByIdAndDelete(card._id);
         return;
       }
-      throw new Forbidden403();
+      throw new Forbidden403('Попытка удалить чужую карточку');
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequest400();
+        throw new BadRequest400('Неправильный запрос');
       }
-      throw new InternalServerError500();
+      throw new InternalServerError500('На сервере произошла ошибка');
     })
     .catch(next);
 };
@@ -63,9 +63,9 @@ module.exports.putLike = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequest400();
+        throw new BadRequest400('Неправильный запрос');
       }
-      throw new InternalServerError500();
+      throw new InternalServerError500('На сервере произошла ошибка');
     })
     .catch(next);
 };
@@ -85,9 +85,9 @@ module.exports.deleteLike = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequest400();
+        throw new BadRequest400('Неправильный запрос');
       }
-      throw new InternalServerError500();
+      throw new InternalServerError500('На сервере произошла ошибка');
     })
     .catch(next);
 };

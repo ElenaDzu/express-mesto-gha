@@ -1,5 +1,5 @@
 class Conflict409 extends Error {
-  constructor(message = 'Существующий емайл') {
+  constructor(message) {
     super(message);
     this.statusCode = 409;
   }

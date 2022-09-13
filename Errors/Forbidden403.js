@@ -1,5 +1,5 @@
 class Forbidden403 extends Error {
-  constructor(message = 'Попытка удалить чужую карточку') {
+  constructor(message) {
     super(message);
     this.statusCode = 403;
   }

@@ -1,5 +1,5 @@
 class BadRequest400 extends Error {
-  constructor(message = 'Неправильный запрос') {
+  constructor(message) {
     super(message);
     this.statusCode = 404;
   }

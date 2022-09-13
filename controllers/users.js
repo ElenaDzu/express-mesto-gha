@@ -5,12 +5,13 @@ const Conflict409 = require('../Errors/Confliсt409');
 const BadRequest400 = require('../Errors/BadRequest400');
 const InternalServerError500 = require('../Errors/InternalServerError500');
 const NotFound404 = require('../Errors/NotFound404');
+const Unauthorized401 = require('../Errors/Unauthorized 401');
 
 module.exports.getUser = (req, res, next) => {
   User.find({})
     .then((user) => res.send({ data: user }))
     .catch(() => {
-      throw new InternalServerError500();
+      throw new InternalServerError500('На сервере произошла ошибка');
     })
     .catch(next);
 };
@@ -19,15 +20,15 @@ module.exports.getUserId = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        throw new NotFound404();
+        throw new NotFound404('Объект не найден');
       }
       res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequest400();
+        throw new BadRequest400('Неправильный запрос');
       }
-      throw new InternalServerError500();
+      throw new InternalServerError500('На сервере произошла ошибка');
     })
     .catch(next);
 };
@@ -47,12 +48,12 @@ module.exports.createUser = (req, res, next) => {
       })
       .catch((err) => {
         if (err.code === 11000) {
-          throw new Conflict409();
+          throw new Conflict409('Введен существующий емайл');
         }
         if (err.name === 'ValidationError') {
-          throw new BadRequest400();
+          throw new BadRequest400('Неправильный запрос');
         }
-        throw new InternalServerError500();
+        throw new InternalServerError500('На сервере произошла ошибка');
       })
       .catch(next);
   });
@@ -61,7 +62,7 @@ module.exports.createUser = (req, res, next) => {
 module.exports.patchUserId = (req, res, next) => {
   const { name, about } = req.body;
   if (!name || !about) {
-    throw new BadRequest400();
+    throw new BadRequest400('Неправильный запрос');
   }
   User.findByIdAndUpdate(
     req.user._id,
@@ -73,13 +74,13 @@ module.exports.patchUserId = (req, res, next) => {
         res.send({ data: user });
         return;
       }
-      throw new NotFound404();
+      throw new NotFound404('Объект не найден');
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequest400();
+        throw new BadRequest400('Неправильный запрос');
       }
-      throw new InternalServerError500();
+      throw new InternalServerError500('На сервере произошла ошибка');
     })
     .catch(next);
 };
@@ -87,7 +88,7 @@ module.exports.patchUserId = (req, res, next) => {
 module.exports.patchAvatar = (req, res, next) => {
   const { avatar } = req.body;
   if (!avatar) {
-    throw new BadRequest400();
+    throw new BadRequest400('Неправильный запрос');
   }
   User.findByIdAndUpdate(
     req.user._id,
@@ -99,13 +100,13 @@ module.exports.patchAvatar = (req, res, next) => {
         res.send({ data: user });
         return;
       }
-      throw new NotFound404();
+      throw new NotFound404('Объект не найден');
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequest400();
+        throw new BadRequest400('Неправильный запрос');
       }
-      throw new InternalServerError500();
+      throw new InternalServerError500('На сервере произошла ошибка');
     })
     .catch(next);
 };
@@ -115,14 +116,14 @@ module.exports.login = (req, res, next) => {
   User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        return Promise.reject(new Error('Неправильные почта или пароль'));
+        return Promise.reject(new Unauthorized401('Неверный логин, пароль, токен'));
       }
 
       return { user, matched: bcrypt.compare(password, user.password) };
     })
     .then(({ user, matched }) => {
       if (!matched) {
-        return Promise.reject(new Error('Неправильные почта или пароль'));
+        return Promise.reject(new Unauthorized401('Неверный логин, пароль, токен'));
       }
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
       res.cookie('token', token, { maxAge: 3600 * 24 * 7, httpOnly: true });
