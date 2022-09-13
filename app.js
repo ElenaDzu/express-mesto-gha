@@ -46,8 +46,9 @@ app.all('/*', () => {
 
 app.use(errors());
 
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   res.status(err.statusCode).json({ message: err.message });
+  next();
 });
 
 app.listen(PORT);
