@@ -6,7 +6,7 @@ module.exports = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    throw new Unauthorized401('Необходима авторизацияя');
+    throw new Unauthorized401('Неверный логин, пароль, токен');
   }
 
   const token = authorization.replace('Bearer ', '');
@@ -15,7 +15,7 @@ module.exports = (req, res, next) => {
   try {
     payload = jwt.verify(token, 'super-strong-secret');
   } catch (err) {
-    throw new Unauthorized401('Необходима авторизацияя');
+    throw new Unauthorized401('Неверный логин, пароль, токен');
   }
 
   req.user = payload;
