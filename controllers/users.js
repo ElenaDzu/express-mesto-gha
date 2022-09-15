@@ -9,15 +9,7 @@ const Unauthorized401 = require('../Errors/Unauthorized 401');
 
 module.exports.getUser = (req, res, next) => {
   User.find({})
-    .then((user) => res.status(200).send({
-      data: {
-        name: user.name,
-        about: user.about,
-        avatar: user.avatar,
-        email: user.email,
-        password: user.password,
-      },
-    }))
+    .then((user) => res.send({ data: user }))
     .catch(() => {
       throw new InternalServerError500('На сервере произошла ошибка');
     })
@@ -30,15 +22,7 @@ module.exports.getUserId = (req, res, next) => {
       if (!user) {
         throw new NotFound404('Объект не найден');
       }
-      res.status(200).send({
-        data: {
-          name: user.name,
-          about: user.about,
-          avatar: user.avatar,
-          email: user.email,
-          password: user.password,
-        },
-      });
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
