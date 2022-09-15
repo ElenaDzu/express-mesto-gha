@@ -5,7 +5,7 @@ const Conflict409 = require('../Errors/Confliсt409');
 const BadRequest400 = require('../Errors/BadRequest400');
 const InternalServerError500 = require('../Errors/InternalServerError500');
 const NotFound404 = require('../Errors/NotFound404');
-const Unauthorized401 = require('../Errors/Unauthorized 401');
+const Unauthorized401 = require('../Errors/Unauthorized401');
 
 module.exports.getUser = (req, res, next) => {
   User.find({})
