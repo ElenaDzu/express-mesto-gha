@@ -19,8 +19,6 @@ module.exports.validateCreateUser = celebrate({
   }),
 });
 
-//module.exports.validateGetUser =//
-
 module.exports.validateGetUserId = celebrate({
   params: Joi.object().keys({
     userId: Joi.string().alphanum().length(24),
@@ -45,8 +43,6 @@ module.exports.validatePatchAvatar = celebrate({
       ),
   }),
 });
-
-//module.exports.validateGetCards =//
 
 module.exports.validateCreateCards = celebrate({
   body: Joi.object().keys({
