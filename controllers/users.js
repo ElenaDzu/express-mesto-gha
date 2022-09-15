@@ -48,7 +48,7 @@ module.exports.createUser = (req, res, next) => {
           expiresIn: '7d',
         });
         res.cookie('token', token, { maxAge: 3600 * 24 * 7, httpOnly: true });
-        res.send({
+        res.status(200).send({
           data: {
             name: user.name,
             about: user.about,
