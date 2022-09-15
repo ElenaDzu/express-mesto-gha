@@ -5,7 +5,7 @@ const { errors, celebrate, Joi } = require('celebrate');
 const routes = require('./routes/users');
 const NotFound404 = require('./Errors/NotFound404');
 const { login, createUser } = require('./controllers/users');
-const auth = require('./middlewares/auth')
+const auth = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
 
