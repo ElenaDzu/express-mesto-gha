@@ -19,7 +19,7 @@ module.exports.createCard = (req, res, next) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(BadRequest400('Неправильный запрос'));
+        throw new BadRequest400('Неправильный запрос');
       }
       throw new InternalServerError500('На сервере произошла ошибка');
     })
