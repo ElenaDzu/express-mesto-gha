@@ -35,7 +35,7 @@ module.exports.getUserId = (req, res, next) => {
 
 module.exports.createUser = (req, res, next) => {
   const {
-    name, about, avatar, email, password
+    name, about, avatar, email, password,
   } = req.body;
   bcrypt.hash(password, 10).then((hash) => {
     User.create({
@@ -80,7 +80,7 @@ module.exports.patchUserId = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { name, about },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
     .then((user) => {
       if (user) {
@@ -106,7 +106,7 @@ module.exports.patchAvatar = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { avatar },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
     .then((user) => {
       if (user) {
@@ -131,7 +131,7 @@ module.exports.login = (req, res, next) => {
     .then((user) => {
       if (!user) {
         return Promise.reject(
-          new Unauthorized401('Неверный логин, пароль, токен')
+          new Unauthorized401('Неверный логин, пароль, токен'),
         );
       }
 
@@ -140,7 +140,7 @@ module.exports.login = (req, res, next) => {
     .then(({ user, matched }) => {
       if (!matched) {
         return Promise.reject(
-          new Unauthorized401('Неверный логин, пароль, токен')
+          new Unauthorized401('Неверный логин, пароль, токен'),
         );
       }
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
