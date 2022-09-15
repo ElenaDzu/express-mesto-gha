@@ -5,14 +5,14 @@ const Unauthorized401 = require('../Errors/Unauthorized 401');
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    if (!req.cookies.token) { throw new Unauthorized401('Неверный логин, пароль, токен'); }
+    if (!res.cookies.token) { throw new Unauthorized401('Неверный логин, пароль, токен'); }
   }
   let token;
 
   if (authorization) {
     token = authorization.replace('Bearer ', '');
   } else {
-    token = req.cookies.token;
+    token = res.cookies.token;
   }
 
   let payload;
