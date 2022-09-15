@@ -9,7 +9,7 @@ const { login, createUser } = require('./controllers/users');
 const { PORT = 3000 } = process.env;
 
 const app = express();
-const auth = require('../middlewares/auth');
+const auth = require('./middlewares/auth');
 
 app.use(express.json());
 app.use(cookieParser());
