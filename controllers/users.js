@@ -9,7 +9,7 @@ const Unauthorized401 = require('../Errors/Unauthorized401');
 
 module.exports.getUser = (req, res, next) => {
   User.find({})
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.status(200).send({ data: user }))
     .catch(() => {
       throw new InternalServerError500('На сервере произошла ошибка');
     })
@@ -152,7 +152,7 @@ module.exports.login = (req, res, next) => {
       return Promise.resolve();
     })
     .catch((err) => {
-      res.status(401).send({ message: err.message });
+      res.status(err.statusCode).send({ message: err.message });
     })
     .catch(next);
 };
