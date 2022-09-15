@@ -4,6 +4,7 @@ const cardRouter = require('./routes/cards');
 const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
 const { validateLogin, validateCreateUser } = require('./validators');
+const NotFound404 = require('./Errors/NotFound404');
 
 router.post('/signin', validateLogin, login);
 
@@ -14,3 +15,7 @@ router.use(auth);
 router.use('/users', userRouter);
 
 router.use('/cards', cardRouter);
+
+router.all('/*', () => {
+  throw new NotFound404();
+});
