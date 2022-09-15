@@ -2,7 +2,6 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const { errors, celebrate, Joi } = require('celebrate');
-const router = require('express').Router();
 const routes = require('./routes/users');
 const NotFound404 = require('./Errors/NotFound404');
 const { login, createUser } = require('./controllers/users');
@@ -37,8 +36,8 @@ app.post('/signup', celebrate({
     ),
   }),
 }), createUser);
-router.use(auth);
-app.use('/users', routes);
+
+app.use('/users', auth, routes);
 
 app.use('/cards', require('./routes/cards'));
 
