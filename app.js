@@ -2,33 +2,20 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
-const router = require('express').Router();
-const routes = require('./routes/users');
 const NotFound404 = require('./Errors/NotFound404');
-const { login, createUser } = require('./controllers/users');
-const { validateLogin, validateCreateUser } = require('./validators');
+const routes = require('./routes');
 
 const { PORT = 3000 } = process.env;
 
 const app = express();
-const auth = require('./middlewares/auth');
-
-app.use(express.json());
-app.use(cookieParser());
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
 });
 
-app.post('/signin', validateLogin, login);
-
-app.post('/signup', validateCreateUser, createUser);
-
-router.use(auth);
-app.use('/users', routes);
-
-app.use('/cards', require('./routes/cards'));
-
+app.use(express.json());
+app.use(cookieParser());
+app.use(routes);
 app.all('/*', () => {
   throw new NotFound404();
 });
