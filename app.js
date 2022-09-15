@@ -1,5 +1,4 @@
 const express = require('express');
-
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
@@ -10,13 +9,13 @@ const { PORT = 3000 } = process.env;
 
 const app = express();
 
+app.use(express.json());
+app.use(cookieParser());
+app.use(routes);
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
 });
 
-app.use(express.json());
-app.use(cookieParser());
-app.use(routes);
 app.all('/*', () => {
   throw new NotFound404();
 });
