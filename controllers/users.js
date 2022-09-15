@@ -131,7 +131,7 @@ module.exports.login = (req, res, next) => {
     .then((user) => {
       if (!user) {
         return Promise.reject(
-          new Unauthorized401('Неверный логин, пароль, токен'),
+          new Unauthorized401('Неверный логин, пароль, токен(стр 134)'),
         );
       }
 
@@ -140,7 +140,7 @@ module.exports.login = (req, res, next) => {
     .then(({ user, matched }) => {
       if (!matched) {
         return Promise.reject(
-          new Unauthorized401('Неверный логин, пароль, токен'),
+          new Unauthorized401('Неверный логин, пароль, токен(стр 143)'),
         );
       }
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
