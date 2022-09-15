@@ -29,6 +29,10 @@ app.use('/users', routes);
 
 app.use('/cards', require('./routes/cards'));
 
+app.all('/*', () => {
+  throw new NotFound404();
+});
+
 app.use(errors());
 
 app.use((err, req, res, next) => {
