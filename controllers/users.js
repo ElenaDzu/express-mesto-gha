@@ -34,17 +34,28 @@ module.exports.getUserId = (req, res, next) => {
 };
 
 module.exports.createUser = (req, res, next) => {
-  const {
-    name, about, avatar, email, password,
-  } = req.body;
+  const { name, about, avatar, email, password } = req.body;
   bcrypt.hash(password, 10).then((hash) => {
     User.create({
-      name, about, avatar, email, password: hash,
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
     })
       .then((user) => {
-        const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+        const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
+          expiresIn: '7d',
+        });
         res.cookie('token', token, { maxAge: 3600 * 24 * 7, httpOnly: true });
-        res.status(201).send({ data: user });
+        res.send({
+          data: {
+            name: user.name,
+            about: user.about,
+            avatar: user.avatar,
+            email: user.email,
+          },
+        });
       })
       .catch((err) => {
         if (err.code === 11000) {
@@ -67,7 +78,7 @@ module.exports.patchUserId = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { name, about },
-    { new: true, runValidators: true },
+    { new: true, runValidators: true }
   )
     .then((user) => {
       if (user) {
@@ -93,7 +104,7 @@ module.exports.patchAvatar = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { avatar },
-    { new: true, runValidators: true },
+    { new: true, runValidators: true }
   )
     .then((user) => {
       if (user) {
@@ -113,28 +124,33 @@ module.exports.patchAvatar = (req, res, next) => {
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
-  User.findOne({ email }).select('+password')
+  User.findOne({ email })
+    .select('+password')
     .then((user) => {
       if (!user) {
-        return Promise.reject(new Unauthorized401('Неверный логин, пароль, токен'));
+        return Promise.reject(
+          new Unauthorized401('Неверный логин, пароль, токен')
+        );
       }
 
       return { user, matched: bcrypt.compare(password, user.password) };
     })
     .then(({ user, matched }) => {
       if (!matched) {
-        return Promise.reject(new Unauthorized401('Неверный логин, пароль, токен'));
+        return Promise.reject(
+          new Unauthorized401('Неверный логин, пароль, токен')
+        );
       }
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
+        expiresIn: '7d',
+      });
       res.cookie('token', token, { maxAge: 3600 * 24 * 7, httpOnly: true });
 
       res.send({ message: 'Всё верно!' });
       return Promise.resolve();
     })
     .catch((err) => {
-      res
-        .status(401)
-        .send({ message: err.message });
+      res.status(401).send({ message: err.message });
     })
     .catch(next);
 };
