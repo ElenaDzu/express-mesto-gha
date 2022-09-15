@@ -12,7 +12,7 @@ module.exports = (req, res, next) => {
   if (authorization) {
     token = authorization.replace('Bearer ', '');
   } else {
-    token = req.cookie.token;
+    token = req.cookies.token;
   }
 
   let payload;
