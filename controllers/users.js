@@ -152,7 +152,7 @@ module.exports.login = (req, res, next) => {
       return Promise.resolve();
     })
     .catch((err) => {
-      res.status(err.statusCode).send({ message: err.message });
+      res.status(401).send({ message: err.message });
     })
     .catch(next);
 };
