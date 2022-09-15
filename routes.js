@@ -16,6 +16,8 @@ router.use('/users', userRouter);
 
 router.use('/cards', cardRouter);
 
-router.all('/*', () => {
-  throw new NotFound404('Маршрут не найден');
+router.use((req, res, next) => {
+  next(new NotFound404('Маршрут не найден'));
 });
+
+module.exports = router;
