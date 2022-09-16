@@ -5,7 +5,6 @@ const Conflict409 = require('../Errors/Confliсt409');
 const BadRequest400 = require('../Errors/BadRequest400');
 const InternalServerError500 = require('../Errors/InternalServerError500');
 const NotFound404 = require('../Errors/NotFound404');
-const Unauthorized401 = require('../Errors/Unauthorized401');
 
 module.exports.getUser = (req, res, next) => {
   User.find({})
@@ -126,30 +125,12 @@ module.exports.patchAvatar = (req, res, next) => {
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
-  User.findOne({ email })
-    .select('+password')
+
+  return User.findUserByCredentials(email, password)
     .then((user) => {
-      if (!user) {
-        return Promise.reject(
-          new Unauthorized401('Неверный логин, пароль, токен(стр 134)'),
-        );
-      }
-
-      return { user, matched: bcrypt.compare(password, user.password) };
-    })
-    .then(({ user, matched }) => {
-      if (!matched) {
-        return Promise.reject(
-          new Unauthorized401('Неверный логин, пароль, токен(стр 143)'),
-        );
-      }
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
-        expiresIn: '7d',
-      });
+      const token = jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' });
       res.cookie('token', token, { maxAge: 3600 * 24 * 7, httpOnly: true });
-
-      res.send({ message: 'Всё верно!' });
-      return Promise.resolve();
+      res.send({ token });
     })
     .catch((err) => {
       res.status(401).send({ message: err.message });
