@@ -38,6 +38,7 @@ module.exports.deleteCard = (req, res, next) => {
           if (err) throw new Error(err);
           res.send({ data: doc });
         });
+        return;
       }
       next(new Forbidden403('Попытка удалить чужую карточку'));
     })
