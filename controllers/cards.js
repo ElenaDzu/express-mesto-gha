@@ -33,12 +33,12 @@ module.exports.deleteCard = (req, res, next) => {
         next(new NotFound404('Объект не найден'));
         return;
       }
-      if (card && card.owner === req.user._id) {
+      if (card && card.owner.toString() === req.user._id) {
         res.send({ data: card });
-        Card.findByIdAndDelete(card._id);
+        Card.deleteOne({ _id: card._id });
         return;
       }
-      throw new Forbidden403('Попытка удалить чужую карточку');
+      next(new Forbidden403('Попытка удалить чужую карточку'));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
