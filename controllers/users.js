@@ -8,7 +8,7 @@ const NotFound404 = require('../Errors/NotFound404');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
-    .then((user) => res.status(200).send({ data: user }))
+    .then((user) => res.status(200).send(user))
     .catch(() => {
       throw new InternalServerError500('На сервере произошла ошибка');
     })
@@ -17,7 +17,7 @@ module.exports.getUsers = (req, res, next) => {
 
 module.exports.getUser = (req, res, next) => {
   User.findById(req.user._id)
-    .then((user) => res.status(200).send({ data: user }))
+    .then((user) => res.status(200).send(user))
     .catch(() => {
       throw new InternalServerError500('На сервере произошла ошибка');
     })
@@ -30,7 +30,7 @@ module.exports.getUserId = (req, res, next) => {
       if (!user) {
         throw new NotFound404('Объект не найден');
       }
-      res.send({ data: user });
+      res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -59,12 +59,12 @@ module.exports.createUser = (req, res, next) => {
         });
         res.cookie('token', token, { maxAge: 3600 * 24 * 7, httpOnly: true });
         res.status(200).send({
-          data: {
-            name: user.name,
-            about: user.about,
-            avatar: user.avatar,
-            email: user.email,
-          },
+
+          name: user.name,
+          about: user.about,
+          avatar: user.avatar,
+          email: user.email,
+
         });
       })
       .catch((err) => {
@@ -92,7 +92,7 @@ module.exports.patchUserId = (req, res, next) => {
   )
     .then((user) => {
       if (user) {
-        res.send({ data: user });
+        res.send(user);
         return;
       }
       throw new NotFound404('Объект не найден');
@@ -118,7 +118,7 @@ module.exports.patchAvatar = (req, res, next) => {
   )
     .then((user) => {
       if (user) {
-        res.send({ data: user });
+        res.send(user);
         return;
       }
       throw new NotFound404('Объект не найден');
