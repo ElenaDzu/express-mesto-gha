@@ -19,16 +19,10 @@ module.exports.validateCreateUser = celebrate({
   }),
 });
 
-module.exports.validateGetUser = celebrate({
-  query: Joi.object().keys({}),
-});
-
 module.exports.validateGetUserId = celebrate({
   params: Joi.object().keys({
     userId: Joi.string().alphanum().length(24),
   }),
-  headers: Joi.object().keys({}),
-  query: Joi.object().keys({}),
 });
 
 module.exports.validatePatchUserId = celebrate({
