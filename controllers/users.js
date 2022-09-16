@@ -6,8 +6,17 @@ const BadRequest400 = require('../Errors/BadRequest400');
 const InternalServerError500 = require('../Errors/InternalServerError500');
 const NotFound404 = require('../Errors/NotFound404');
 
-module.exports.getUser = (req, res, next) => {
+module.exports.getUsers = (req, res, next) => {
   User.find({})
+    .then((user) => res.status(200).send({ data: user }))
+    .catch(() => {
+      throw new InternalServerError500('На сервере произошла ошибка');
+    })
+    .catch(next);
+};
+
+module.exports.getUser = (req, res, next) => {
+  User.findById(req.user._id)
     .then((user) => res.status(200).send({ data: user }))
     .catch(() => {
       throw new InternalServerError500('На сервере произошла ошибка');
