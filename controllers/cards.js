@@ -30,7 +30,8 @@ module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
-        throw new NotFound404();
+        next(new NotFound404('Объект не найден'));
+        return;
       }
       if (card && card.owner === req.user._id) {
         res.send({ data: card });
@@ -59,7 +60,7 @@ module.exports.putLike = (req, res, next) => {
         res.send({ data: card });
         return;
       }
-      throw new NotFound404();
+      next(new NotFound404('Объект не найден'));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -81,7 +82,7 @@ module.exports.deleteLike = (req, res, next) => {
         res.send({ data: card });
         return;
       }
-      throw new NotFound404();
+      next(new NotFound404('Объект не найден'));
     })
     .catch((err) => {
       if (err.name === 'CastError') {

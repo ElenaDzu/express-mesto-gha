@@ -28,15 +28,16 @@ module.exports.getUserId = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        throw new NotFound404('Объект не найден');
+        next(new NotFound404('Объект не найден'));
+      } else {
+        res.send(user);
       }
-      res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         throw new BadRequest400('Неправильный запрос');
       }
-      throw new InternalServerError500('На сервере произошла ошибка');
+      throw new InternalServerError500(err);
     })
     .catch(next);
 };
