@@ -17,7 +17,11 @@ app.use(routes);
 app.use(errors());
 
 app.use((err, req, res, next) => {
-  res.status(err.statusCode).json({ message: err.message });
+  let statusCode = 500;
+  if (err.statusCode) {
+    statusCode = err.statusCode;
+  }
+  res.status(statusCode).json({ message: err.message });
   next();
 });
 

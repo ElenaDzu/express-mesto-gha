@@ -8,9 +8,8 @@ module.exports.getCards = (req, res, next) => {
   Card.find({})
     .then((card) => res.send({ data: card }))
     .catch(() => {
-      throw new InternalServerError500('На сервере произошла ошибка');
-    })
-    .catch(next);
+      next(new InternalServerError500('На сервере произошла ошибка'));
+    });
 };
 
 module.exports.createCard = (req, res, next) => {
@@ -19,11 +18,11 @@ module.exports.createCard = (req, res, next) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequest400('Неправильный запрос');
+        next(new BadRequest400('Неправильный запрос'));
+        return;
       }
-      throw new InternalServerError500('На сервере произошла ошибка');
-    })
-    .catch(next);
+      next(new InternalServerError500('На сервере произошла ошибка'));
+    });
 };
 
 module.exports.deleteCard = (req, res, next) => {
@@ -44,11 +43,11 @@ module.exports.deleteCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequest400('Неправильный запрос');
+        next(new BadRequest400('Неправильный запрос'));
+        return;
       }
-      throw new InternalServerError500('На сервере произошла ошибка');
-    })
-    .catch(next);
+      next(new InternalServerError500('На сервере произошла ошибка'));
+    });
 };
 
 module.exports.putLike = (req, res, next) => {
@@ -66,11 +65,11 @@ module.exports.putLike = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequest400('Неправильный запрос');
+        next(new BadRequest400('Неправильный запрос'));
+        return;
       }
-      throw new InternalServerError500('На сервере произошла ошибка');
-    })
-    .catch(next);
+      next(new InternalServerError500('На сервере произошла ошибка'));
+    });
 };
 
 module.exports.deleteLike = (req, res, next) => {
@@ -88,9 +87,9 @@ module.exports.deleteLike = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequest400('Неправильный запрос');
+        next(new BadRequest400('Неправильный запрос'));
+        return;
       }
-      throw new InternalServerError500('На сервере произошла ошибка');
-    })
-    .catch(next);
+      next(new InternalServerError500('На сервере произошла ошибка'));
+    });
 };

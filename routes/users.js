@@ -2,8 +2,6 @@ const router = require('express').Router();
 
 const { validateGetUserId, validatePatchUserId, validatePatchAvatar } = require('../middlewares/validators');
 
-const auth = require('../middlewares/auth');
-
 const {
   getUsers,
   getUser,
@@ -12,28 +10,25 @@ const {
   patchAvatar,
 } = require('../controllers/users');
 
-router.get('/', auth, getUsers);
+router.get('/', getUsers);
 
-router.get('/me', auth, getUser);
+router.get('/me', getUser);
 
 router.get(
   '/:userId',
   validateGetUserId,
-  auth,
   getUserId,
 );
 
 router.patch(
   '/me',
   validatePatchUserId,
-  auth,
   patchUserId,
 );
 
 router.patch(
   '/me/avatar',
   validatePatchAvatar,
-  auth,
   patchAvatar,
 );
 

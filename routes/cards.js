@@ -4,8 +4,6 @@ const {
   validateCreateCards, validateDeleteCard, validatePutLike, validateDeleteLike,
 } = require('../middlewares/validators');
 
-const auth = require('../middlewares/auth');
-
 const {
   getCards,
   createCard,
@@ -14,33 +12,29 @@ const {
   deleteLike,
 } = require('../controllers/cards');
 
-router.get('/', auth, getCards);
+router.get('/', getCards);
 
 router.post(
   '/',
   validateCreateCards,
-  auth,
   createCard,
 );
 
 router.delete(
   '/:cardId',
   validateDeleteCard,
-  auth,
   deleteCard,
 );
 
 router.put(
   '/:cardId/likes',
   validatePutLike,
-  auth,
   putLike,
 );
 
 router.delete(
   '/:cardId/likes',
   validateDeleteLike,
-  auth,
   deleteLike,
 );
 
