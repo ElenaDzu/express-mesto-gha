@@ -17,11 +17,9 @@ app.use(routes);
 app.use(errors());
 
 app.use((err, req, res, next) => {
-  let statusCode = 500;
-  if (err.statusCode) {
-    statusCode = err.statusCode;
-  }
-  res.status(statusCode).json({ message: err.message });
+  const statusCode = err.statusCode || 500;
+  const message = statusCode === 500 ? 'Ошибка сервера' : err.message;
+  res.status(statusCode).send({ message });
   next();
 });
 

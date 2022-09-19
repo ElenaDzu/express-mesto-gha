@@ -69,7 +69,8 @@ module.exports.createUser = (req, res, next) => {
           return;
         }
         next(new InternalServerError500('На сервере произошла ошибка'));
-      });
+      })
+      .catch(next);
   });
 };
 
