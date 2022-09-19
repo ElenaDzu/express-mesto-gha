@@ -39,39 +39,43 @@ module.exports.getUserId = (req, res, next) => {
 
 module.exports.createUser = (req, res, next) => {
   const {
-    name, about, avatar, email, password,
+    name,
+    about,
+    avatar,
+    email,
+    password,
   } = req.body;
-  bcrypt.hash(password, 10).then((hash) => {
-    User.create({
-      name,
-      about,
-      avatar,
-      email,
-      password: hash,
-    })
-      .then((user) => {
-        res.status(200).send({
-
-          name: user.name,
-          about: user.about,
-          avatar: user.avatar,
-          email: user.email,
-
+  bcrypt
+    .hash(password, 10)
+    .then((hash) => {
+      User.create({
+        name,
+        about,
+        avatar,
+        email,
+        password: hash,
+      })
+        .then((user) => {
+          res.status(200).send({
+            name: user.name,
+            about: user.about,
+            avatar: user.avatar,
+            email: user.email,
+          });
+        })
+        .catch((err) => {
+          if (err.code === 11000) {
+            next(new Conflict409('Введен существующий емайл'));
+            return;
+          }
+          if (err.name === 'ValidationError') {
+            next(new BadRequest400('Неправильный запрос'));
+            return;
+          }
+          next(new InternalServerError500('На сервере произошла ошибка'));
         });
-      })
-      .catch((err) => {
-        if (err.code === 11000) {
-          next(new Conflict409('Введен существующий емайл'));
-          return;
-        }
-        if (err.name === 'ValidationError') {
-          next(new BadRequest400('Неправильный запрос'));
-          return;
-        }
-        next(new InternalServerError500('На сервере произошла ошибка'));
-      })
-      .catch(next);
-  });
+    })
+    .catch(next);
 };
 
 module.exports.patchUserId = (req, res, next) => {
@@ -124,7 +128,9 @@ module.exports.login = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, 'super-strong-secret', {
+        expiresIn: '7d',
+      });
       res.send({ token });
     })
     .catch(() => {
